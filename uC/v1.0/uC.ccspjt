@@ -33,7 +33,7 @@ AdditionalOptionString=
 3=
 4=
 [ProjectLog]
-Days=4
+Days=5
 D1=02-10-2014
 D1_L=5
 D1_L1=[73231]Project Opened.
@@ -70,6 +70,10 @@ D4_D=0
 D4_L6=[70123]Project Closed.
 D4_L7=[72502]Project Opened.
 D4_L8=[72525]Project Closed.
+D5=31-05-2023
+D5_L=2
+D5_L1=[43613]Project Opened.
+D5_L2=[43635]Project Closed.
 [ExtraIncludes]
 Count=1
 1=uc=z:\home\kolgreen\dropbox\projekty\elektronika\zegar_binarny\uc\old\uc.h
