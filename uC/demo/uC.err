@@ -1,0 +1,4 @@
+>>> Warning 203 "uC.c" Line 101(1,1): Condition always TRUE
+>>> Warning 202 "uC.c" Line 25(6,12): Variable never used:   t_real
+      Memory usage:   ROM=19%      RAM=13% - 18%
+      0 Errors,  2 Warnings.

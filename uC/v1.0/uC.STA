@@ -1,0 +1,63 @@
+
+ROM used:   897/4096 (22%)
+            897/4096 (22%) including unused fragments
+
+            1.0 Average locations per line
+            5.4 Average locations per statement
+
+RAM used:   9/368 (2%) at main() level
+            14/368 (4%) worst case
+
+Stack used: 3 worst case (3 in main + 0 for interrupts)
+Stack size: 8
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  254   139  84  uC.c
+  592     0   0  C:\Program Files\PICC\Devices\16F87.h
+   12     2   1  conversion.c
+   58    24  15  ds1307.c
+----- -----
+  916   165 Total
+
+Page ROM  %  RAM    Vol Diff  Functions:
+---- --- --- ---    --- ----  ----------
+0     21   2    1             @delay_ms1
+0     18   2    2     74  3.1  decToBcd
+0     21   2    3   2156  6.4  @DIV88
+0     53   6    3     76  2.5  bcdToDec
+ Inline         2             @MUL88
+ Inline         3             @I2C_READ_1
+0     52   6    1   2156  6.4  @I2C_WRITE_1
+0      6   1    0     32  1.0  init_DS1307
+0     96  11    5    388  5.0  write_DS1307
+0    113  13    2    192  1.5  read_DS1307
+0     28   3    1    143  2.2  read_time
+0     61   7    1    285  2.3  set_time
+0     98  11    1    836  3.4  show
+0     39   4    0    195  1.4  clear
+0      9   1    1     54  1.2  show_time
+0     22   2    0    160  3.1  blink
+0    256  29    1   2365  7.4  MAIN
+ Inline         0             @cinit1
+
+Program metrics:
+    Functions               14
+    Statements              165
+    Comments                191
+    Volume (V)              13347
+    Difficulty (D)          49.3
+    Effort to implement (E) 657540
+    Time to implement (T)   10 hours, 9 minutes
+    Est Delivered Bugs (B)  3
+    Cyclomatic Complexity   23
+    Maintainability (MI)    68
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00003     4  0  
+00004-007FF   893  1151  
+00800-00FFF     0  2048  
+
+
+

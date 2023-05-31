@@ -1,0 +1,120 @@
+ÀÄuC
+   ÀÄMAIN  0/256  Ram=1
+      ÃÄ@cinit1  (Inline)  Ram=0
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄinit_DS1307  0/6  Ram=0
+      ÃÄread_DS1307  0/113  Ram=2
+      ³  ÃÄ@I2C_WRITE_1  0/52  Ram=1
+      ³  ÃÄ@I2C_WRITE_1  0/52  Ram=1
+      ³  ÃÄ@I2C_WRITE_1  0/52  Ram=1
+      ³  ÀÄ@I2C_READ_1  (Inline)  Ram=3
+      ÃÄwrite_DS1307  0/96  Ram=5
+      ³  ÃÄ@I2C_WRITE_1  0/52  Ram=1
+      ³  ÃÄ@I2C_WRITE_1  0/52  Ram=1
+      ³  ÃÄ@I2C_WRITE_1  0/52  Ram=1
+      ³  ÃÄ@I2C_WRITE_1  0/52  Ram=1
+      ³  ÃÄ@I2C_WRITE_1  0/52  Ram=1
+      ³  ÀÄ@delay_ms1  0/21  Ram=1
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄblink  0/22  Ram=0
+      ³  ÃÄclear  0/39  Ram=0
+      ³  ³  ÃÄ@delay_ms1  0/21  Ram=1
+      ³  ³  ÀÄ@delay_ms1  0/21  Ram=1
+      ³  ÃÄ@delay_ms1  0/21  Ram=1
+      ³  ÃÄshow  0/98  Ram=1
+      ³  ³  ÃÄ@delay_ms1  0/21  Ram=1
+      ³  ³  ÃÄ@delay_ms1  0/21  Ram=1
+      ³  ³  ÃÄ@delay_ms1  0/21  Ram=1
+      ³  ³  ÃÄ@delay_ms1  0/21  Ram=1
+      ³  ³  ÃÄ@delay_ms1  0/21  Ram=1
+      ³  ³  ÃÄ@delay_ms1  0/21  Ram=1
+      ³  ³  ÀÄ@delay_ms1  0/21  Ram=1
+      ³  ÀÄ@delay_ms1  0/21  Ram=1
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄclear  0/39  Ram=0
+      ³  ÀÄ*
+      ÃÄshow  0/98  Ram=1
+      ³  ÀÄ*
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄshow_time  0/9  Ram=1
+      ³  ÃÄclear  0/39  Ram=0
+      ³  ³  ÀÄ*
+      ³  ÀÄshow  0/98  Ram=1
+      ³     ÀÄ*
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄblink  0/22  Ram=0
+      ³  ÀÄ*
+      ÃÄclear  0/39  Ram=0
+      ³  ÀÄ*
+      ÃÄshow  0/98  Ram=1
+      ³  ÀÄ*
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄshow_time  0/9  Ram=1
+      ³  ÀÄ*
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄset_time  0/61  Ram=1
+      ³  ÃÄdecToBcd  0/18  Ram=2
+      ³  ³  ÃÄ@DIV88  0/21  Ram=3
+      ³  ³  ÀÄ@DIV88  0/21  Ram=3
+      ³  ÃÄwrite_DS1307  0/96  Ram=5
+      ³  ³  ÀÄ*
+      ³  ÃÄdecToBcd  0/18  Ram=2
+      ³  ³  ÀÄ*
+      ³  ÃÄwrite_DS1307  0/96  Ram=5
+      ³  ³  ÀÄ*
+      ³  ÃÄdecToBcd  0/18  Ram=2
+      ³  ³  ÀÄ*
+      ³  ÃÄwrite_DS1307  0/96  Ram=5
+      ³  ³  ÀÄ*
+      ³  ÃÄdecToBcd  0/18  Ram=2
+      ³  ³  ÀÄ*
+      ³  ÃÄwrite_DS1307  0/96  Ram=5
+      ³  ³  ÀÄ*
+      ³  ÃÄdecToBcd  0/18  Ram=2
+      ³  ³  ÀÄ*
+      ³  ÃÄwrite_DS1307  0/96  Ram=5
+      ³  ³  ÀÄ*
+      ³  ÃÄdecToBcd  0/18  Ram=2
+      ³  ³  ÀÄ*
+      ³  ÀÄwrite_DS1307  0/96  Ram=5
+      ³     ÀÄ*
+      ÃÄblink  0/22  Ram=0
+      ³  ÀÄ*
+      ÃÄread_time  0/28  Ram=1
+      ³  ÃÄread_DS1307  0/113  Ram=2
+      ³  ³  ÀÄ*
+      ³  ÃÄbcdToDec  0/53  Ram=3
+      ³  ³  ÀÄ@MUL88  (Inline)  Ram=2
+      ³  ÃÄread_DS1307  0/113  Ram=2
+      ³  ³  ÀÄ*
+      ³  ÃÄbcdToDec  0/53  Ram=3
+      ³  ³  ÀÄ*
+      ³  ÃÄread_DS1307  0/113  Ram=2
+      ³  ³  ÀÄ*
+      ³  ÀÄbcdToDec  0/53  Ram=3
+      ³     ÀÄ*
+      ÃÄclear  0/39  Ram=0
+      ³  ÀÄ*
+      ÃÄshow  0/98  Ram=1
+      ³  ÀÄ*
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄshow_time  0/9  Ram=1
+      ³  ÀÄ*
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄclear  0/39  Ram=0
+      ³  ÀÄ*
+      ÃÄshow  0/98  Ram=1
+      ³  ÀÄ*
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄshow_time  0/9  Ram=1
+      ³  ÀÄ*
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄclear  0/39  Ram=0
+      ³  ÀÄ*
+      ÃÄshow  0/98  Ram=1
+      ³  ÀÄ*
+      ÃÄ@delay_ms1  0/21  Ram=1
+      ÃÄshow_time  0/9  Ram=1
+      ³  ÀÄ*
+      ÀÄ@delay_ms1  0/21  Ram=1

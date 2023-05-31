@@ -1,0 +1,214 @@
+#include <16F87.h>
+#use delay(clock=4000000)
+//#fuses NOWDT,XT, NOPUT, NOMCLR, NOBROWNOUT, NOLVP, NOCPD, NOWRT, NODEBUG, NOPROTECT, NOFCMEN, NOIESO
+#fuses XT, MCLR, NOBROWNOUT, NOLVP, NOCPD, NOWRT, NODEBUG, NOPROTECT, NOFCMEN, NOIESO
+
+
+
+#include "conversion.c"
+#include "ds1307.c"
+
+#define bit3          PIN_A0
+#define bit2          PIN_A1
+#define bit1          PIN_A2
+#define on_time       PIN_A3
+#define on_mode       PIN_A4
+#define button_set    PIN_B2
+#define button_plus   PIN_B3
+#define bit5          PIN_B6
+#define bit4          PIN_B7
+#define bit6          PIN_B5
+
+
+
+//#use fixed_io(b_outputs = PIN_B3, PIN_B6, PIN_B7)
+//#use fixed_io(a_input = PIN_A2, PIN_A3, PIN_A4)
+
+
+
+//------------- ZMIENNE -----------
+
+int temp = 0;
+int lcounter = 0;
+//czas bierzacy {h,m, s}
+int t_real[] = {0, 0, 0};
+//------------- FUNKCJE -----------
+/*
+void beep(){
+      Output_high(on_set);
+      Output_high(bit1);
+      delay_ms(100);
+      Output_low(bit1);
+      Output_low(on_set);
+      delay_ms(5);
+}
+*/
+
+//odczytanie czasu z zegara
+void read_time(){
+     t_real[2]=bcdToDec(read_ds1307(0));   // read second
+     t_real[1]=bcdToDec(read_ds1307(1));   // read minute
+     t_real[0]=bcdToDec(read_ds1307(2));  // read hour
+     /*
+     day=bcdToDec(read_ds1307(3));   // read day
+     date=bcdToDec(read_ds1307(4));  // read date
+     month=bcdToDec(read_ds1307(5)); // read month
+     year=bcdToDec(read_ds1307(6));  // read year
+     */
+}
+
+//resetowanie zegara
+void reset_clock(){
+     write_ds1307(2,1); //hour
+     write_ds1307(1,1); //minute
+     write_ds1307(0,1); //second
+     write_ds1307(4,1); //date
+     write_ds1307(5,1); //month
+     write_ds1307(6,1); //year
+}
+
+//zapisanie ustawien czasu do RTC
+void save_time(){
+    /*
+    write_ds1307(0xd1,decToBcd(t_real[1])); //minuty
+    write_ds1307(0xd2,decToBcd(t_real[0])); //godziny
+    */
+    ds1307_set_date_time(1, 1, 1, t_real[0], t_real[1], 0);    
+}
+
+
+//======wyswietlacz============
+//ustawienie danych do wyswietlenia
+void show(int n){
+ delay_ms(2);
+ if (n & 1) Output_high(bit1);
+ else Output_low(bit1);
+ delay_ms(2);
+ n >>= 1;
+ if (n & 1) Output_high(bit2);
+ else Output_low(bit2);
+ delay_ms(2);
+ n >>= 1;
+ if (n & 1) Output_high(bit3);
+ else Output_low(bit3);
+ delay_ms(2);
+ n >>= 1;
+ if (n & 1) Output_high(bit4);
+ else Output_low(bit4);
+ delay_ms(2);
+ n >>= 1;
+ if (n & 1) Output_high(bit5);
+ else Output_low(bit5);
+ delay_ms(2);
+ n >>= 1;
+ if (n & 1) Output_high(bit6);
+ else Output_low(bit6);
+ delay_ms(2);
+}
+
+//ustawienie danych do wyswietlenia
+void clear(){
+ delay_ms(10);
+ Output_low(on_mode);
+ Output_low(on_time);
+ Output_low(bit1);
+ Output_low(bit2);
+ Output_low(bit3);
+ Output_low(bit4);
+ Output_low(bit5);
+ Output_low(bit6);
+ delay_ms(10);
+}
+
+//wyswietlenie czasu
+void show_time(int n){
+        clear();
+        Output_high(on_time);
+        show(n);
+}
+
+
+//---------------MAIN--------------
+void main()
+{
+/*
+   setup_spi(FALSE);
+   setup_timer_0(RTCC_INTERNAL|RTCC_DIV_1);
+   setup_timer_1(T1_DISABLED);
+   setup_timer_2(T2_DISABLED,0,1);
+   setup_comparator(NC_NC_NC_NC);
+   setup_vref(FALSE);
+*/
+
+//set_tris_a(0x1111111);
+//set_tris_b(0x0000000);
+
+
+
+   //zakomentowac po testach
+   //reset_clock();
+
+   delay_ms(1000);
+   init_ds1307();          // initial DS1307
+   
+   delay_ms(500);
+   reset_clock(); 
+
+   write_ds1307(0,read_ds1307(0) & 0x7F); // enable oscillator(bit 7 =0)
+   delay_ms(500);
+
+
+   //petla glowna
+   while(true){
+        int x = 0;
+        
+       //pobranie czasu
+       if (lcounter > 10){
+               lcounter = 0;
+               delay_ms(400);
+               read_time();
+               delay_ms(400);
+       }else { 
+                lcounter = lcounter + 1; 
+       }
+       
+       
+
+       //pokazanie sekund
+       for(x=0;x<10;x++){       
+               //pokazanie czasu
+               Output_high(on_time);
+               show_time(t_real[2]);
+                               
+               //informacja ze sekundy
+               clear();
+               Output_high(on_mode);
+               show(5);    
+       }
+       
+       //pokazanie minut
+       for(x=0;x<10;x++){       
+               //pokazanie czasu
+               Output_high(on_time);
+               show_time(t_real[1]);
+                               
+               //informacja ze sekundy
+               clear();
+               Output_high(on_mode);
+               show(1);    
+       }
+ 
+        //pokazanie godzin
+       for(x=0;x<10;x++){       
+               //pokazanie czasu
+               Output_high(on_time);
+               show_time(t_real[0]);
+                               
+               //informacja ze sekundy
+               clear();
+               Output_high(on_mode);
+               show(4);    
+       }      
+
+   }
+}

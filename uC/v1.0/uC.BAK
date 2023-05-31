@@ -1,0 +1,383 @@
+#include <16F87.h>
+#use delay(clock=4000000)
+//#fuses NOWDT,XT, NOPUT, NOMCLR, NOBROWNOUT, NOLVP, NOCPD, NOWRT, NODEBUG, NOPROTECT, NOFCMEN, NOIESO
+#fuses NOWDT,XT, NOPUT, MCLR, NOBROWNOUT, NOLVP, NOCPD, NOWRT, NODEBUG, NOPROTECT, NOFCMEN, NOIESO
+
+#use rs232(baud=300,parity=N,xmit=PIN_B5,rcv=PIN_B2,bits=9)
+
+#include "conversion.c"
+#include "ds1307.c"
+
+
+
+
+//#use fixed_io(b_outputs = PIN_B3, PIN_B6, PIN_B7)
+//#use fixed_io(a_input = PIN_A2, PIN_A3, PIN_A4)
+
+
+//--------------DEFINICJE----------
+#define E_UP 0
+#define E_OK 2
+#define E_DOWN 1
+#define E_IDLE 3
+//------------- ZMIENNE -----------
+
+char menu_event=E_IDLE;
+char menu_pos=0;
+boolean menu_select=false;
+
+//stan oswietlenia
+boolean light_state=false;
+//zapisano ustawienia, zmienna chwilowa
+boolean set=false;
+
+//czas {{wlaczenia},{wylaczenia}} oswietlenia {{h,m},{h,m}}
+int t_light[2][3] = {{0, 0},{0, 0}};
+//czas wlaczenia karmienia {h,m}
+int t_feed[] = {0, 0};
+//czas bierzacy {h,m}
+int t_real[] = {0, 0};
+
+//------------- FUNKCJE -----------
+void beep(){
+      Output_high(PIN_B3);
+      delay_ms(100);
+      Output_low(PIN_B3);
+      delay_ms(5);
+}
+
+//wlaczenie karmienia
+void feed(){
+   printf("#[Feeding]");
+   Output_high(PIN_B6);
+   delay_ms(0x100);
+   Output_low(PIN_B6);
+   delay_ms(900);
+}
+
+//sterowanie swiatlem
+void light(boolean state){
+    printf("#[Light ");
+    if (state == true) {
+      Output_high(PIN_B7);
+      printf("on");
+    }
+    else{
+      Output_low(PIN_B7);
+      printf("off");
+    }
+    printf("]");
+    delay_ms(900);
+}
+
+
+//odczytanie czasu z zegara
+void read_time(){
+     //t_real[2]=bcdToDec(read_ds1307(0));   // read second
+     t_real[1]=bcdToDec(read_ds1307(1));   // read minute
+     t_real[0]=bcdToDec(read_ds1307(2));  // read hour
+     /*
+     day=bcdToDec(read_ds1307(3));   // read day
+     date=bcdToDec(read_ds1307(4));  // read date
+     month=bcdToDec(read_ds1307(5)); // read month
+     year=bcdToDec(read_ds1307(6));  // read year
+     */
+}
+
+//resetowanie zegara
+void reset_clock(){
+     write_ds1307(2,0); //hour
+     write_ds1307(1,0); //minute
+     write_ds1307(0,0); //second
+     write_ds1307(4,1); //date
+     write_ds1307(5,1); //month
+     write_ds1307(6,1); //year
+
+     write_ds1307(8,0);
+     write_ds1307(9,0);
+     write_ds1307(10,0);
+     write_ds1307(11,0);
+     write_ds1307(12,0);
+     write_ds1307(13,0);
+}
+
+//zapisanie alarmow w pamieci zegara i casu realnego
+void save_set(){
+    //czas realny
+    /*
+    write_ds1307(0xd1,decToBcd(t_real[1])); //minuty
+    write_ds1307(0xd2,decToBcd(t_real[0])); //godziny
+    */
+    ds1307_set_date_time(1, 1, 1, t_real[0], t_real[1], 0);
+
+    //alarmy
+    write_ds1307(0xd8,decToBcd(t_light[0][0])); //godzina wlaczenia sw
+    write_ds1307(0xd9,decToBcd(t_light[0][1])); //minuta wlaczenia sw
+
+    write_ds1307(0xd10,decToBcd(t_light[1][0])); //godziny wyl sw
+    write_ds1307(0xd11,decToBcd(t_light[1][1])); //minuta wyl sw
+
+    write_ds1307(0xd12,decToBcd(t_feed[0])); //godzina karmienia
+    write_ds1307(0xd13,decToBcd(t_feed[1])); //minuta karmienia
+    //write_ds1307(0xd16,decToBcd(t_feed[2]));
+
+    printf("#");
+}
+
+//odczytanie alarmow z pamieci zegara
+void read_set(){
+   t_light[0][0] = bcdToDec(read_ds1307(0xd8));
+   t_light[0][1] = bcdToDec(read_ds1307(0xd9));
+
+   t_light[1][0] = bcdToDec(read_ds1307(0xd10));
+   t_light[1][1] = bcdToDec(read_ds1307(0xd11));
+
+   t_feed[0] = bcdToDec(read_ds1307(0xd12));
+   t_feed[1] = bcdToDec(read_ds1307(0xd13));
+   //t_feed[2] = bcdToDec(read_ds1307(0xd16));
+}
+
+//sprawdzenie jaki przycisk z panelu sterowania jest klik
+int getButton() {
+    if (input(PIN_A2)) {
+        return E_OK;
+    } else if (input(PIN_A3)) {
+        return E_DOWN;
+    } else if (input(PIN_A4)) {
+        return E_UP;
+    }
+    else return E_IDLE;
+}
+
+
+
+void SetMinute(char &min){
+    boolean run=true;
+    while(run){
+        printf("#[m:%d]",min);
+        delay_ms(500);
+        switch(getButton()){
+            case E_DOWN:
+                if (min>0) (min) = min-1;
+                else (min) = 59;
+                break;
+            case E_UP:
+                if (min<59) (min) = min+1;
+                else (min) = 0;
+                break;
+            case E_OK:
+                run=false;
+                break;
+        }
+        menu_select=false;
+        menu_pos=0;
+    }
+
+}
+
+void SetHour(char &hour){
+    boolean run=true;
+    while(run){
+        delay_ms(500);
+        printf("#[h:%d]",hour);
+        switch(getButton()){
+            case E_DOWN:
+                if (hour>0) (hour) = hour-1;
+                else (hour) = 24;
+                break;
+            case E_UP:
+                if (hour<24) (hour) = hour+1;
+                else (hour) = 0;
+                break;
+            case E_OK:
+                run=false;
+        }
+        menu_select=false;
+        menu_pos=0;
+    }
+
+}
+
+
+void change_menu(){
+
+    #define MENU_ELEMENTS 9
+
+    if (menu_event == E_UP && menu_pos < MENU_ELEMENTS && menu_select==false){ menu_pos++; beep();}
+    if (menu_event == E_DOWN && 0 < menu_pos && menu_select==false){ menu_pos--; beep();}
+    if (menu_event == E_OK && menu_pos!=0) menu_select = true;
+
+    switch(menu_pos){
+        case 0:
+            printf("#[Exit]");
+            delay_ms(900);
+            break;
+        case 1:
+            printf("#[Now H]");
+            if (menu_select) {
+                SetHour(t_real[0]);
+                save_set();
+                beep();
+                beep();
+            }
+            break;
+        case 2:
+            printf("#[Now M]");
+            if (menu_select) {
+                SetMinute(t_real[1]);
+                save_set();
+                beep();
+                beep();
+            }
+            break;
+        case 3:
+            printf("#[Feed H]");
+            if (menu_select) {
+                SetHour(t_feed[0]);
+                save_set();
+                beep();
+                beep();
+            }
+            break;
+        case 4:
+            printf("#[Feed M]");
+            if (menu_select) {
+                SetMinute(t_feed[1]);
+                save_set();
+                beep();
+                beep();
+            }
+            break;
+        case 5:
+            printf("#[Light ON H]");
+            if (menu_select) {
+                SetHour(t_light[0][0]);
+                save_set();
+                beep();
+                beep();
+            }
+            break;
+        case 6:
+            printf("#[Light ON M]");
+            if (menu_select) {
+                SetMinute(t_light[0][1]);
+                save_set();
+                beep();
+                beep();
+            }
+            break;
+        case 7:
+            printf("#[Light OFF H]");
+            if (menu_select) {
+                SetHour(t_light[1][0]);
+                save_set();
+                beep();
+                beep();
+            }
+            break;
+        case 8:
+            printf("#[Light OFF M]");
+            if (menu_select) {
+                SetMinute(t_light[1][1]);
+                save_set();
+                beep();
+                beep();
+            }
+            break;
+         case 9:
+            printf("#[Reset]");
+            if (menu_select){
+               reset_clock();
+               printf("#[Wait...]");
+               beep();
+               beep();
+            }
+            break;
+    }
+}
+
+//---------------MAIN--------------
+void main()
+{
+/*
+   setup_spi(FALSE);
+   setup_timer_0(RTCC_INTERNAL|RTCC_DIV_1);
+   setup_timer_1(T1_DISABLED);
+   setup_timer_2(T2_DISABLED,0,1);
+   setup_comparator(NC_NC_NC_NC);
+   setup_vref(FALSE);
+*/
+
+//set_tris_a(0x1111111);
+//set_tris_b(0x0000000);
+
+   beep();
+
+   //wykasowac po testach
+   //reset_clock();
+
+   delay_ms(100);
+   init_ds1307();          // initial DS1307
+
+   write_ds1307(0,read_ds1307(0) & 0x7F); // enable oscillator(bit 7 =0)
+   delay_ms(1000);
+
+   printf("#[Feeder 2.7]");
+   delay_ms(1000);
+
+   //petla glowna
+   while(true){
+
+       /*
+         menu_event = getButton();
+         if (menu_event == E_UP) printf("#[EUP]");
+         if (menu_event == E_DOWN) printf("#[EDOWN]");
+         if (menu_event == E_OK) printf("#[EOK]");
+      */
+
+       //wczytanie czasu
+       read_time();
+
+       //wczytanie ustawien alarmow
+       read_set();
+
+        //klik w button, pewnie przesuwanie sie po menu
+        menu_event = getButton();
+        if (menu_event != E_IDLE) change_menu();
+        
+        //wyswietlenie czasu
+        if (menu_pos == 0){
+            printf("#[%d:%d]",t_real[0],t_real[1]);
+            delay_ms(1000);
+        }
+
+       //------------- INSTRUKCJE WYWOLANE ZEGAREM -------------
+       //jesli czas wlaczenia oswietlenia
+       if (light_state == false){
+          if (t_light[0][0] <= t_real[0] && t_light[0][1] <= t_real[1]){
+             if ( t_real[0] < t_light[1][0] ){
+                  light(true);
+                  light_state = true;
+                  delay_ms(60000);
+                  printf("#");
+             }
+          }
+       }
+       //jesli czas wylaczenia oswietlenia
+       if(light_state == true){
+          if (t_light[1][0] <= t_real[0] && t_light[1][1] <= t_real[1]){
+               light(false);
+               light_state = false;
+               delay_ms(60000);
+               printf("#");
+          }
+       }
+       //jesli czas karmienia
+       if (t_feed[0] ==t_real[0] && t_feed[1] == t_real[1]){
+               feed();
+               delay_ms(60000);
+               printf("#");
+       }
+
+   }
+}

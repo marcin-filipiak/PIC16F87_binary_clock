@@ -1,0 +1,127 @@
+#include <16F87.h>
+#use delay(clock=4000000)
+//#fuses NOWDT,XT, NOPUT, NOMCLR, NOBROWNOUT, NOLVP, NOCPD, NOWRT, NODEBUG, NOPROTECT, NOFCMEN, NOIESO
+#fuses NOWDT,XT, NOPUT, MCLR, NOBROWNOUT, NOLVP, NOCPD, NOWRT, NODEBUG, NOPROTECT, NOFCMEN, NOIESO
+
+#use rs232(baud=300,parity=N,xmit=PIN_B5,rcv=PIN_B2,bits=9)
+
+#include "conversion.c"
+#include "ds1307.c"
+
+
+
+
+//#use fixed_io(b_outputs = PIN_B3, PIN_B6, PIN_B7)
+//#use fixed_io(a_input = PIN_A2, PIN_A3, PIN_A4)
+
+
+
+//------------- ZMIENNE -----------
+//czas bierzacy {h,m, s}
+int temp = 0;
+int t_real[] = {0, 0, 0};
+//------------- FUNKCJE -----------
+void beep(){
+      Output_high(PIN_B3);
+      delay_ms(100);
+      Output_low(PIN_B3);
+      delay_ms(5);
+}
+
+
+//odczytanie czasu z zegara
+void read_time(){
+     t_real[2]=bcdToDec(read_ds1307(0));   // read second
+     t_real[1]=bcdToDec(read_ds1307(1));   // read minute
+     t_real[0]=bcdToDec(read_ds1307(2));  // read hour
+     /*
+     day=bcdToDec(read_ds1307(3));   // read day
+     date=bcdToDec(read_ds1307(4));  // read date
+     month=bcdToDec(read_ds1307(5)); // read month
+     year=bcdToDec(read_ds1307(6));  // read year
+     */
+}
+
+//resetowanie zegara
+void reset_clock(){
+     write_ds1307(2,0); //hour
+     write_ds1307(1,0); //minute
+     write_ds1307(0,0); //second
+     write_ds1307(4,1); //date
+     write_ds1307(5,1); //month
+     write_ds1307(6,1); //year
+
+     write_ds1307(8,0);
+     write_ds1307(9,0);
+     write_ds1307(10,0);
+     write_ds1307(11,0);
+     write_ds1307(12,0);
+     write_ds1307(13,0);
+}
+
+//zapisanie alarmow w pamieci zegara i casu realnego
+void save_set(){
+    //czas realny
+    /*
+    write_ds1307(0xd1,decToBcd(t_real[1])); //minuty
+    write_ds1307(0xd2,decToBcd(t_real[0])); //godziny
+    */
+    ds1307_set_date_time(1, 1, 1, t_real[0], t_real[1], 0);
+
+    //alarmy
+    write_ds1307(0xd8,decToBcd(t_light[0][0])); //godzina wlaczenia sw
+    write_ds1307(0xd9,decToBcd(t_light[0][1])); //minuta wlaczenia sw
+
+    write_ds1307(0xd10,decToBcd(t_light[1][0])); //godziny wyl sw
+    write_ds1307(0xd11,decToBcd(t_light[1][1])); //minuta wyl sw
+
+    write_ds1307(0xd12,decToBcd(t_feed[0])); //godzina karmienia
+    write_ds1307(0xd13,decToBcd(t_feed[1])); //minuta karmienia
+    //write_ds1307(0xd16,decToBcd(t_feed[2]));
+
+    printf("#");
+}
+
+
+
+//---------------MAIN--------------
+void main()
+{
+/*
+   setup_spi(FALSE);
+   setup_timer_0(RTCC_INTERNAL|RTCC_DIV_1);
+   setup_timer_1(T1_DISABLED);
+   setup_timer_2(T2_DISABLED,0,1);
+   setup_comparator(NC_NC_NC_NC);
+   setup_vref(FALSE);
+*/
+
+//set_tris_a(0x1111111);
+//set_tris_b(0x0000000);
+
+   beep();
+
+   //wykasowac po testach
+   //reset_clock();
+
+   delay_ms(100);
+   init_ds1307();          // initial DS1307
+
+   write_ds1307(0,read_ds1307(0) & 0x7F); // enable oscillator(bit 7 =0)
+   delay_ms(1000);
+
+
+   //petla glowna
+   while(true){
+
+       //wczytanie czasu
+       read_time();
+
+          if (temp <= t_real[2]){
+                temp = t_real[2];
+                beep();
+          }
+       delay_ms(100);
+
+   }
+}

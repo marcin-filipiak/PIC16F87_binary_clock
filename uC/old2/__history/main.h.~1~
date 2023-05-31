@@ -1,0 +1,13 @@
+#include <16F87.h>
+
+#FUSES NOWDT                 	//No Watch Dog Timer
+#FUSES WRTC                  	//Configuration registers write protected
+#FUSES WRT_800               	//Program Memory Write Protected from 0 to 0x7FF
+
+#use delay(crystal=4MHz)
+#use i2c(Master,Fast,sda=PIN_B1,scl=PIN_B4,force_hw)
+
+#define LED PIN_None
+#define DELAY 1000
+
+

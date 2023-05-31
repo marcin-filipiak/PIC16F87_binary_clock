@@ -1,0 +1,78 @@
+[PROJECT]
+Target=uC.hex
+Development_Mode=2
+Processor=0x0F87
+ToolSuite=CCS
+Processor_Text=PIC16F84A
+CCSVersion=5.025
+Compiler=PCM
+[Directories]
+Include=
+Library=
+LinkerScript=
+[Target Data]
+FileList=uC.c
+BuildTool=C-COMPILER
+OptionString=+FM
+AdditionalOptionString=
+BuildRequired=1
+[uC.c]
+Type=4
+Path=
+FileList=
+BuildTool=
+OptionString=
+AdditionalOptionString=
+[mru-list]
+1=uC.c
+[Windows]
+0=0000 C:\users\kolgreen\Pulpit\ELEK~3RY\STER~NA2\uC\PIC1~0OM\uC.c 0 0 796 451 3 0
+[Opened Files]
+1=uC.c
+2=
+3=
+4=
+[ProjectLog]
+Days=4
+D1=02-10-2014
+D1_L=5
+D1_L1=[73231]Project Opened.
+D1_L2=[73244]Started Editing.
+D1_L3=[73546]Stopped Editing.
+D1_L4=[73945]Started Editing.
+D1_L5=[74247]Stopped Editing.
+D2=03-10-2014
+D2_L=8
+D2_L1=[37898]Started Editing.
+D2_L2=[38207]Stopped Editing.
+D2_L3=[48602]Started Editing.
+D2_L4=[48913]Stopped Editing.
+D2_L5=[49667]Started Editing.
+D2_L6=[49979]Stopped Editing.
+D2_L7=[50117]Started Editing.
+D2_L8=[50424]Stopped Editing.
+TotalEdit=2
+TotalDebug=0
+D3=06-10-2014
+D3_E=1
+D3_D=0
+D3_L=1
+D3_L1=[44720]Project Closed.
+D4=08-10-2014
+D4_L=8
+D4_L1=[32802]Project Opened.
+D4_L2=[39014]Project Closed.
+D4_L3=[42684]Project Opened.
+D4_L4=[51477]Started Editing.
+D4_L5=[51777]Stopped Editing.
+D4_E=1
+D4_D=0
+D4_L6=[70123]Project Closed.
+D4_L7=[72502]Project Opened.
+D4_L8=[72525]Project Closed.
+[ExtraIncludes]
+Count=1
+1=uc=z:\home\kolgreen\dropbox\projekty\elektronika\zegar_binarny\uc\old\uc.h
+[Units]
+Count=1
+1=uC (main)

@@ -1,0 +1,15 @@
+
+#include <16F87.h>
+
+#include <conversion.c>
+#include <ds1307.c>
+
+#FUSES NOWDT                    //No Watch Dog Timer
+
+#use delay(crystal=4MHz)
+
+ 
+#define DELAY 1000
+
+
+

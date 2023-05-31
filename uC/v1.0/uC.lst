@@ -1,0 +1,1271 @@
+CCS PCM C Compiler, Version 5.025, 5967               13-lis-14 18:48
+
+               Filename:   Z:\home\kolgreen\Dropbox\Projekty\Elektronika\zegar_binarny\uC\old\uC.lst
+
+               ROM used:   897 words (22%)
+                           Largest free fragment is 2048
+               RAM used:   9 (2%) at main() level
+                           14 (4%) worst case
+               Stack used: 3 locations
+               Stack size: 8
+
+*
+0000:  MOVLW  02
+0001:  MOVWF  0A
+0002:  GOTO   281
+0003:  NOP
+.................... #include <16F87.h> 
+.................... //////////// Standard Header file for the PIC16F87 device //////////////// 
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... ////        (C) Copyright 1996, 2013 Custom Computer Services          //// 
+.................... //// This source code may only be used by licensed users of the CCS C  //// 
+.................... //// compiler.  This source code may only be distributed to other      //// 
+.................... //// licensed users of the CCS C compiler.  No other use, reproduction //// 
+.................... //// or distribution is permitted without written permission.          //// 
+.................... //// Derivative programs created using this software in object code    //// 
+.................... //// form are not restricted in any way.                               //// 
+.................... /////////////////////////////////////////////////////////////////////////// 
+.................... #device PIC16F87 
+*
+01CC:  MOVF   26,W
+01CD:  CLRF   78
+01CE:  SUBWF  25,W
+01CF:  BTFSC  03.0
+01D0:  GOTO   1D4
+01D1:  MOVF   25,W
+01D2:  MOVWF  77
+01D3:  GOTO   1E0
+01D4:  CLRF   77
+01D5:  MOVLW  08
+01D6:  MOVWF  27
+01D7:  RLF    25,F
+01D8:  RLF    77,F
+01D9:  MOVF   26,W
+01DA:  SUBWF  77,W
+01DB:  BTFSC  03.0
+01DC:  MOVWF  77
+01DD:  RLF    78,F
+01DE:  DECFSZ 27,F
+01DF:  GOTO   1D7
+01E0:  RETURN
+*
+023A:  CLRF   77
+023B:  CLRF   78
+023C:  MOVF   27,W
+023D:  BCF    03.0
+023E:  BTFSC  28.0
+023F:  ADDWF  77,F
+0240:  RRF    77,F
+0241:  RRF    78,F
+0242:  BTFSC  28.1
+0243:  ADDWF  77,F
+0244:  RRF    77,F
+0245:  RRF    78,F
+0246:  BTFSC  28.2
+0247:  ADDWF  77,F
+0248:  RRF    77,F
+0249:  RRF    78,F
+024A:  BTFSC  28.3
+024B:  ADDWF  77,F
+024C:  RRF    77,F
+024D:  RRF    78,F
+024E:  BTFSC  28.4
+024F:  ADDWF  77,F
+0250:  RRF    77,F
+0251:  RRF    78,F
+0252:  BTFSC  28.5
+0253:  ADDWF  77,F
+0254:  RRF    77,F
+0255:  RRF    78,F
+0256:  BTFSC  28.6
+0257:  ADDWF  77,F
+0258:  RRF    77,F
+0259:  RRF    78,F
+025A:  BTFSC  28.7
+025B:  ADDWF  77,F
+025C:  RRF    77,F
+025D:  RRF    78,F
+....................  
+.................... #list 
+....................  
+....................  
+.................... //#use delay(internal=4MHz) 
+.................... #use delay(clock=4MHz) 
+*
+0004:  MOVLW  28
+0005:  MOVWF  04
+0006:  BCF    03.7
+0007:  MOVF   00,W
+0008:  BTFSC  03.2
+0009:  GOTO   018
+000A:  MOVLW  01
+000B:  MOVWF  78
+000C:  CLRF   77
+000D:  DECFSZ 77,F
+000E:  GOTO   00D
+000F:  DECFSZ 78,F
+0010:  GOTO   00C
+0011:  MOVLW  4A
+0012:  MOVWF  77
+0013:  DECFSZ 77,F
+0014:  GOTO   013
+0015:  GOTO   016
+0016:  DECFSZ 00,F
+0017:  GOTO   00A
+0018:  RETURN
+....................  
+.................... #fuses XT, NOWDT, MCLR, NOBROWNOUT, NOPROTECT //Fuse dla pic16f87 
+....................  
+....................  
+.................... #include "conversion.c" 
+.................... // Convert normal decimal numbers to binary coded decimal 
+.................... byte decToBcd(byte val) 
+.................... { 
+....................   return ( (val/10*16) + (val%10) ); 
+*
+01E1:  MOVF   23,W
+01E2:  MOVWF  25
+01E3:  MOVLW  0A
+01E4:  MOVWF  26
+01E5:  CALL   1CC
+01E6:  SWAPF  78,W
+01E7:  MOVWF  24
+01E8:  MOVLW  F0
+01E9:  ANDWF  24,F
+01EA:  MOVF   23,W
+01EB:  MOVWF  25
+01EC:  MOVLW  0A
+01ED:  MOVWF  26
+01EE:  CALL   1CC
+01EF:  MOVF   77,W
+01F0:  ADDWF  24,W
+01F1:  MOVWF  78
+01F2:  RETURN
+.................... } 
+....................  
+.................... // Convert binary coded decimal to normal decimal numbers 
+.................... byte bcdToDec(byte val) 
+.................... { 
+....................   return ( (val/16*10) + (val%16) ); 
+*
+0230:  SWAPF  24,W
+0231:  MOVWF  77
+0232:  MOVLW  0F
+0233:  ANDWF  77,F
+0234:  MOVF   77,W
+0235:  MOVWF  26
+0236:  MOVF   26,W
+0237:  MOVWF  27
+0238:  MOVLW  0A
+0239:  MOVWF  28
+*
+025E:  MOVF   78,W
+025F:  MOVWF  25
+0260:  MOVF   24,W
+0261:  ANDLW  0F
+0262:  ADDWF  78,W
+0263:  MOVWF  78
+0264:  RETURN
+.................... } 
+....................  
+.................... #include "ds1307.c" 
+.................... /* 
+.................... ZEGAR CZASU RZECZYWISTEGO  
+....................   DS1307 
+.................... */   
+....................  
+.................... #define DS1307_SDA  PIN_B1 
+.................... #define DS1307_SCL  PIN_B4 
+....................  
+.................... #use i2c(master, sda=DS1307_SDA, scl=DS1307_SCL) 
+*
+001F:  MOVLW  08
+0020:  MOVWF  78
+0021:  NOP
+0022:  BCF    06.4
+0023:  BSF    03.5
+0024:  BCF    06.4
+0025:  NOP
+0026:  BCF    03.5
+0027:  RLF    28,F
+0028:  BCF    06.1
+0029:  BTFSS  03.0
+002A:  GOTO   02E
+002B:  BSF    03.5
+002C:  BSF    06.1
+002D:  BCF    03.5
+002E:  BTFSC  03.0
+002F:  GOTO   033
+0030:  BSF    03.5
+0031:  BCF    06.1
+0032:  BCF    03.5
+0033:  BSF    03.5
+0034:  BSF    06.4
+0035:  BCF    03.5
+0036:  BTFSS  06.4
+0037:  GOTO   036
+0038:  DECFSZ 78,F
+0039:  GOTO   021
+003A:  NOP
+003B:  BCF    06.4
+003C:  BSF    03.5
+003D:  BCF    06.4
+003E:  NOP
+003F:  BSF    06.1
+0040:  NOP
+0041:  NOP
+0042:  BSF    06.4
+0043:  BCF    03.5
+0044:  BTFSS  06.4
+0045:  GOTO   044
+0046:  CLRF   78
+0047:  NOP
+0048:  BTFSC  06.1
+0049:  BSF    78.0
+004A:  BCF    06.4
+004B:  BSF    03.5
+004C:  BCF    06.4
+004D:  BCF    03.5
+004E:  BCF    06.1
+004F:  BSF    03.5
+0050:  BCF    06.1
+0051:  BCF    03.5
+0052:  RETURN
+*
+007F:  MOVLW  08
+0080:  MOVWF  26
+0081:  MOVF   77,W
+0082:  MOVWF  27
+0083:  BSF    03.5
+0084:  BSF    06.1
+0085:  NOP
+0086:  BSF    06.4
+0087:  BCF    03.5
+0088:  BTFSS  06.4
+0089:  GOTO   088
+008A:  BTFSC  06.1
+008B:  BSF    03.0
+008C:  BTFSS  06.1
+008D:  BCF    03.0
+008E:  RLF    78,F
+008F:  NOP
+0090:  BSF    03.5
+0091:  BCF    06.4
+0092:  BCF    03.5
+0093:  BCF    06.4
+0094:  DECFSZ 26,F
+0095:  GOTO   083
+0096:  BSF    03.5
+0097:  BSF    06.1
+0098:  NOP
+0099:  BCF    03.5
+009A:  BCF    06.1
+009B:  MOVF   27,W
+009C:  BTFSC  03.2
+009D:  GOTO   0A1
+009E:  BSF    03.5
+009F:  BCF    06.1
+00A0:  BCF    03.5
+00A1:  NOP
+00A2:  BSF    03.5
+00A3:  BSF    06.4
+00A4:  BCF    03.5
+00A5:  BTFSS  06.4
+00A6:  GOTO   0A5
+00A7:  NOP
+00A8:  BCF    06.4
+00A9:  BSF    03.5
+00AA:  BCF    06.4
+00AB:  NOP
+00AC:  BCF    03.5
+00AD:  BCF    06.1
+00AE:  BSF    03.5
+00AF:  BCF    06.1
+....................  
+.................... //========================== 
+.................... // initial DS1307 
+.................... //========================== 
+.................... void init_DS1307() 
+.................... { 
+....................    output_float(DS1307_SCL); 
+*
+0019:  BSF    03.5
+001A:  BSF    06.4
+....................    output_float(DS1307_SDA); 
+001B:  BSF    06.1
+001C:  BCF    03.5
+001D:  BCF    0A.3
+001E:  GOTO   294 (RETURN)
+.................... } 
+.................... //========================== 
+.................... // write data one byte to 
+.................... // DS1307 
+.................... //========================== 
+.................... void write_DS1307(byte address, BYTE data) 
+.................... { 
+....................    short int status; 
+....................    char x; 
+....................    i2c_start(); 
+*
+00C4:  BSF    03.5
+00C5:  BSF    06.1
+00C6:  NOP
+00C7:  BSF    06.4
+00C8:  NOP
+00C9:  BCF    03.5
+00CA:  BCF    06.1
+00CB:  BSF    03.5
+00CC:  BCF    06.1
+00CD:  NOP
+00CE:  BCF    03.5
+00CF:  BCF    06.4
+00D0:  BSF    03.5
+00D1:  BCF    06.4
+....................    i2c_write(0xd0); 
+00D2:  MOVLW  D0
+00D3:  BCF    03.5
+00D4:  MOVWF  28
+00D5:  CALL   01F
+....................    i2c_write(address); 
+00D6:  MOVF   24,W
+00D7:  MOVWF  28
+00D8:  CALL   01F
+....................    i2c_write(data); 
+00D9:  MOVF   25,W
+00DA:  MOVWF  28
+00DB:  CALL   01F
+....................    i2c_stop(); 
+00DC:  BSF    03.5
+00DD:  BCF    06.1
+00DE:  NOP
+00DF:  BSF    06.4
+00E0:  BCF    03.5
+00E1:  BTFSS  06.4
+00E2:  GOTO   0E1
+00E3:  NOP
+00E4:  GOTO   0E5
+00E5:  NOP
+00E6:  BSF    03.5
+00E7:  BSF    06.1
+00E8:  NOP
+....................    i2c_start(); 
+00E9:  BSF    06.1
+00EA:  NOP
+00EB:  BSF    06.4
+00EC:  NOP
+00ED:  BCF    03.5
+00EE:  BCF    06.1
+00EF:  BSF    03.5
+00F0:  BCF    06.1
+00F1:  NOP
+00F2:  BCF    03.5
+00F3:  BCF    06.4
+00F4:  BSF    03.5
+00F5:  BCF    06.4
+....................    status=i2c_write(0xd0); 
+00F6:  MOVLW  D0
+00F7:  BCF    03.5
+00F8:  MOVWF  28
+00F9:  CALL   01F
+00FA:  MOVF   78,W
+00FB:  BCF    26.0
+00FC:  BTFSC  78.0
+00FD:  BSF    26.0
+....................    x = 0xd0; 
+00FE:  MOVLW  D0
+00FF:  MOVWF  27
+....................    while(status==1 || x<5) 
+0100:  BTFSC  26.0
+0101:  GOTO   106
+0102:  MOVF   27,W
+0103:  SUBLW  04
+0104:  BTFSS  03.0
+0105:  GOTO   123
+....................    { 
+....................       i2c_start(); 
+0106:  BSF    03.5
+0107:  BSF    06.1
+0108:  NOP
+0109:  BSF    06.4
+010A:  NOP
+010B:  BCF    03.5
+010C:  BTFSS  06.4
+010D:  GOTO   10C
+010E:  BCF    06.1
+010F:  BSF    03.5
+0110:  BCF    06.1
+0111:  NOP
+0112:  BCF    03.5
+0113:  BCF    06.4
+0114:  BSF    03.5
+0115:  BCF    06.4
+....................       status=i2c_write(0xd0); 
+0116:  MOVLW  D0
+0117:  BCF    03.5
+0118:  MOVWF  28
+0119:  CALL   01F
+011A:  MOVF   78,W
+011B:  BCF    26.0
+011C:  BTFSC  78.0
+011D:  BSF    26.0
+....................       x++; 
+011E:  INCF   27,F
+....................       delay_ms(20); 
+011F:  MOVLW  14
+0120:  MOVWF  28
+0121:  CALL   004
+0122:  GOTO   100
+....................    } 
+0123:  RETURN
+.................... } 
+.................... //========================== 
+.................... // read data one byte from DS1307 
+.................... //========================== 
+.................... BYTE read_DS1307(byte address) 
+.................... { 
+....................    BYTE data; 
+....................    i2c_start(); 
+*
+0053:  BSF    03.5
+0054:  BSF    06.1
+0055:  NOP
+0056:  BSF    06.4
+0057:  NOP
+0058:  BCF    03.5
+0059:  BTFSS  06.4
+005A:  GOTO   059
+005B:  BCF    06.1
+005C:  BSF    03.5
+005D:  BCF    06.1
+005E:  NOP
+005F:  BCF    03.5
+0060:  BCF    06.4
+0061:  BSF    03.5
+0062:  BCF    06.4
+....................    i2c_write(0xd0); 
+0063:  MOVLW  D0
+0064:  BCF    03.5
+0065:  MOVWF  28
+0066:  CALL   01F
+....................    i2c_write(address); 
+0067:  MOVF   23,W
+0068:  MOVWF  28
+0069:  CALL   01F
+....................    i2c_start(); 
+006A:  BSF    03.5
+006B:  BSF    06.1
+006C:  NOP
+006D:  BSF    06.4
+006E:  NOP
+006F:  BCF    03.5
+0070:  BTFSS  06.4
+0071:  GOTO   070
+0072:  BCF    06.1
+0073:  BSF    03.5
+0074:  BCF    06.1
+0075:  NOP
+0076:  BCF    03.5
+0077:  BCF    06.4
+0078:  BSF    03.5
+0079:  BCF    06.4
+....................    i2c_write(0xd1); 
+007A:  MOVLW  D1
+007B:  BCF    03.5
+007C:  MOVWF  28
+007D:  CALL   01F
+....................    data=i2c_read(0); 
+007E:  CLRF   77
+*
+00B0:  MOVF   78,W
+00B1:  BCF    03.5
+00B2:  MOVWF  24
+....................    i2c_stop(); 
+00B3:  BSF    03.5
+00B4:  BCF    06.1
+00B5:  NOP
+00B6:  BSF    06.4
+00B7:  BCF    03.5
+00B8:  BTFSS  06.4
+00B9:  GOTO   0B8
+00BA:  NOP
+00BB:  GOTO   0BC
+00BC:  NOP
+00BD:  BSF    03.5
+00BE:  BSF    06.1
+00BF:  NOP
+....................    return(data); 
+00C0:  BCF    03.5
+00C1:  MOVF   24,W
+00C2:  MOVWF  78
+00C3:  RETURN
+.................... } 
+....................  
+....................  
+.................... #define bit3          PIN_A0 
+.................... #define bit2          PIN_A1 
+.................... #define bit1          PIN_A2 
+.................... #define on_time       PIN_A3 
+.................... #define on_mode       PIN_A4 
+.................... #define button_set    PIN_B2 
+.................... #define button_plus   PIN_B3 
+.................... #define bit5          PIN_B6 
+.................... #define bit4          PIN_B7 
+.................... #define bit6          PIN_B5 
+....................  
+.................... //------------- ZMIENNE ----------- 
+.................... //czas bierzacy {h,m, s} 
+.................... byte t_real[] = {0, 0, 0}; 
+*
+0288:  BCF    03.5
+0289:  CLRF   20
+028A:  CLRF   21
+028B:  CLRF   22
+....................  
+.................... //------------- FUNKCJE ----------- 
+.................... //czytanie zegara 
+.................... void read_time() 
+.................... { 
+....................    t_real[2] = bcdToDec(read_ds1307 (0)); // read second 
+*
+0265:  CLRF   23
+0266:  CALL   053
+0267:  MOVF   78,W
+0268:  MOVWF  23
+0269:  MOVWF  24
+026A:  CALL   230
+026B:  MOVF   78,W
+026C:  MOVWF  22
+....................    t_real[1] = bcdToDec(read_ds1307 (1)); // read minute 
+026D:  MOVLW  01
+026E:  MOVWF  23
+026F:  CALL   053
+0270:  MOVF   78,W
+0271:  MOVWF  23
+0272:  MOVWF  24
+0273:  CALL   230
+0274:  MOVF   78,W
+0275:  MOVWF  21
+....................    t_real[0] = bcdToDec(read_ds1307 (2)); // read hour 
+0276:  MOVLW  02
+0277:  MOVWF  23
+0278:  CALL   053
+0279:  MOVF   78,W
+027A:  MOVWF  23
+027B:  MOVWF  24
+027C:  CALL   230
+027D:  MOVF   78,W
+027E:  MOVWF  20
+027F:  BCF    0A.3
+0280:  GOTO   317 (RETURN)
+.................... } 
+....................  
+.................... //ustawianie zegara 
+.................... void set_time() 
+.................... { 
+....................    write_ds1307 (4, decToBcd(1)); //day 
+*
+01F3:  MOVLW  01
+01F4:  MOVWF  23
+01F5:  CALL   1E1
+01F6:  MOVF   78,W
+01F7:  MOVWF  23
+01F8:  MOVLW  04
+01F9:  MOVWF  24
+01FA:  MOVF   78,W
+01FB:  MOVWF  25
+01FC:  CALL   0C4
+....................    write_ds1307 (5, decToBcd(1)); //month 
+01FD:  MOVLW  01
+01FE:  MOVWF  23
+01FF:  CALL   1E1
+0200:  MOVF   78,W
+0201:  MOVWF  23
+0202:  MOVLW  05
+0203:  MOVWF  24
+0204:  MOVF   78,W
+0205:  MOVWF  25
+0206:  CALL   0C4
+....................    write_ds1307 (6, decToBcd(1)); //year 
+0207:  MOVLW  01
+0208:  MOVWF  23
+0209:  CALL   1E1
+020A:  MOVF   78,W
+020B:  MOVWF  23
+020C:  MOVLW  06
+020D:  MOVWF  24
+020E:  MOVF   78,W
+020F:  MOVWF  25
+0210:  CALL   0C4
+....................    write_ds1307 (2, decToBcd(t_real[0])); //hour; 
+0211:  MOVF   20,W
+0212:  MOVWF  23
+0213:  CALL   1E1
+0214:  MOVF   78,W
+0215:  MOVWF  23
+0216:  MOVLW  02
+0217:  MOVWF  24
+0218:  MOVF   78,W
+0219:  MOVWF  25
+021A:  CALL   0C4
+....................    write_ds1307 (1, decToBcd(t_real[1])); //minute 
+021B:  MOVF   21,W
+021C:  MOVWF  23
+021D:  CALL   1E1
+021E:  MOVF   78,W
+021F:  MOVWF  23
+0220:  MOVLW  01
+0221:  MOVWF  24
+0222:  MOVF   78,W
+0223:  MOVWF  25
+0224:  CALL   0C4
+....................    write_ds1307 (0, decToBcd(t_real[2])); //second 
+0225:  MOVF   22,W
+0226:  MOVWF  23
+0227:  CALL   1E1
+0228:  MOVF   78,W
+0229:  MOVWF  23
+022A:  CLRF   24
+022B:  MOVF   78,W
+022C:  MOVWF  25
+022D:  CALL   0C4
+022E:  BCF    0A.3
+022F:  GOTO   312 (RETURN)
+....................  
+.................... } 
+....................  
+.................... // 
+.................... void reset_time() 
+.................... { 
+....................    write_ds1307 (4, decToBcd(1)); //day 
+....................    write_ds1307 (5, decToBcd(1)); //month 
+....................    write_ds1307 (6, decToBcd(1)); //year 
+....................    write_ds1307 (2, decToBcd(1)); //hour; 
+....................    write_ds1307 (1, decToBcd(3)); //minute 
+....................    write_ds1307 (0, decToBcd(1)); //second 
+....................  
+.................... } 
+....................  
+.................... //======wyswietlacz============ 
+.................... //ustawienie danych do wyswietlenia 
+.................... void show(byte n){ 
+....................  delay_ms(2); 
+*
+014B:  MOVLW  02
+014C:  MOVWF  28
+014D:  CALL   004
+....................  if (n & 1) Output_high(bit1); 
+014E:  BTFSS  24.0
+014F:  GOTO   155
+0150:  BSF    03.5
+0151:  BCF    05.2
+0152:  BCF    03.5
+0153:  BSF    05.2
+0154:  GOTO   159
+....................  else Output_low(bit1); 
+0155:  BSF    03.5
+0156:  BCF    05.2
+0157:  BCF    03.5
+0158:  BCF    05.2
+....................  delay_ms(2); 
+0159:  MOVLW  02
+015A:  MOVWF  28
+015B:  CALL   004
+....................  n >>= 1; 
+015C:  BCF    03.0
+015D:  RRF    24,F
+....................  if (n & 1) Output_high(bit2); 
+015E:  BTFSS  24.0
+015F:  GOTO   165
+0160:  BSF    03.5
+0161:  BCF    05.1
+0162:  BCF    03.5
+0163:  BSF    05.1
+0164:  GOTO   169
+....................  else Output_low(bit2); 
+0165:  BSF    03.5
+0166:  BCF    05.1
+0167:  BCF    03.5
+0168:  BCF    05.1
+....................  delay_ms(2); 
+0169:  MOVLW  02
+016A:  MOVWF  28
+016B:  CALL   004
+....................  n >>= 1; 
+016C:  BCF    03.0
+016D:  RRF    24,F
+....................  if (n & 1) Output_high(bit3); 
+016E:  BTFSS  24.0
+016F:  GOTO   175
+0170:  BSF    03.5
+0171:  BCF    05.0
+0172:  BCF    03.5
+0173:  BSF    05.0
+0174:  GOTO   179
+....................  else Output_low(bit3); 
+0175:  BSF    03.5
+0176:  BCF    05.0
+0177:  BCF    03.5
+0178:  BCF    05.0
+....................  delay_ms(2); 
+0179:  MOVLW  02
+017A:  MOVWF  28
+017B:  CALL   004
+....................  n >>= 1; 
+017C:  BCF    03.0
+017D:  RRF    24,F
+....................  if (n & 1) Output_high(bit4); 
+017E:  BTFSS  24.0
+017F:  GOTO   185
+0180:  BSF    03.5
+0181:  BCF    06.7
+0182:  BCF    03.5
+0183:  BSF    06.7
+0184:  GOTO   189
+....................  else Output_low(bit4); 
+0185:  BSF    03.5
+0186:  BCF    06.7
+0187:  BCF    03.5
+0188:  BCF    06.7
+....................  delay_ms(2); 
+0189:  MOVLW  02
+018A:  MOVWF  28
+018B:  CALL   004
+....................  n >>= 1; 
+018C:  BCF    03.0
+018D:  RRF    24,F
+....................  if (n & 1) Output_high(bit5); 
+018E:  BTFSS  24.0
+018F:  GOTO   195
+0190:  BSF    03.5
+0191:  BCF    06.6
+0192:  BCF    03.5
+0193:  BSF    06.6
+0194:  GOTO   199
+....................  else Output_low(bit5); 
+0195:  BSF    03.5
+0196:  BCF    06.6
+0197:  BCF    03.5
+0198:  BCF    06.6
+....................  delay_ms(2); 
+0199:  MOVLW  02
+019A:  MOVWF  28
+019B:  CALL   004
+....................  n >>= 1; 
+019C:  BCF    03.0
+019D:  RRF    24,F
+....................  if (n & 1) Output_high(bit6); 
+019E:  BTFSS  24.0
+019F:  GOTO   1A5
+01A0:  BSF    03.5
+01A1:  BCF    06.5
+01A2:  BCF    03.5
+01A3:  BSF    06.5
+01A4:  GOTO   1A9
+....................  else Output_low(bit6); 
+01A5:  BSF    03.5
+01A6:  BCF    06.5
+01A7:  BCF    03.5
+01A8:  BCF    06.5
+....................  delay_ms(2); 
+01A9:  MOVLW  02
+01AA:  MOVWF  28
+01AB:  CALL   004
+01AC:  RETURN
+.................... } 
+....................  
+....................  
+.................... //ustawienie danych do wyswietlenia 
+.................... void clear(){ 
+....................  delay_ms(10); 
+*
+0124:  MOVLW  0A
+0125:  MOVWF  28
+0126:  CALL   004
+....................  Output_low(on_mode); 
+0127:  BSF    03.5
+0128:  BCF    05.4
+0129:  BCF    03.5
+012A:  BCF    05.4
+....................  Output_low(on_time); 
+012B:  BSF    03.5
+012C:  BCF    05.3
+012D:  BCF    03.5
+012E:  BCF    05.3
+....................  Output_low(bit1); 
+012F:  BSF    03.5
+0130:  BCF    05.2
+0131:  BCF    03.5
+0132:  BCF    05.2
+....................  Output_low(bit2); 
+0133:  BSF    03.5
+0134:  BCF    05.1
+0135:  BCF    03.5
+0136:  BCF    05.1
+....................  Output_low(bit3); 
+0137:  BSF    03.5
+0138:  BCF    05.0
+0139:  BCF    03.5
+013A:  BCF    05.0
+....................  Output_low(bit4); 
+013B:  BSF    03.5
+013C:  BCF    06.7
+013D:  BCF    03.5
+013E:  BCF    06.7
+....................  Output_low(bit5); 
+013F:  BSF    03.5
+0140:  BCF    06.6
+0141:  BCF    03.5
+0142:  BCF    06.6
+....................  Output_low(bit6); 
+0143:  BSF    03.5
+0144:  BCF    06.5
+0145:  BCF    03.5
+0146:  BCF    06.5
+....................  delay_ms(10); 
+0147:  MOVLW  0A
+0148:  MOVWF  28
+0149:  CALL   004
+014A:  RETURN
+.................... } 
+....................  
+.................... //wyswietlenie czasu 
+.................... void show_time(byte n){ 
+....................         clear(); 
+*
+01C3:  CALL   124
+....................         Output_high(on_time); 
+01C4:  BSF    03.5
+01C5:  BCF    05.3
+01C6:  BCF    03.5
+01C7:  BSF    05.3
+....................         show(n); 
+01C8:  MOVF   23,W
+01C9:  MOVWF  24
+01CA:  CALL   14B
+01CB:  RETURN
+.................... } 
+....................  
+.................... //zamrugaj diodami 
+.................... void blink(){ 
+....................         for(int8 x=0;x<10;x++){ 
+*
+01AD:  CLRF   23
+01AE:  MOVF   23,W
+01AF:  SUBLW  09
+01B0:  BTFSS  03.0
+01B1:  GOTO   1C2
+....................                        clear(); 
+01B2:  CALL   124
+....................                        delay_ms(50); 
+01B3:  MOVLW  32
+01B4:  MOVWF  28
+01B5:  CALL   004
+....................                        Output_high(on_mode); 
+01B6:  BSF    03.5
+01B7:  BCF    05.4
+01B8:  BCF    03.5
+01B9:  BSF    05.4
+....................                        show(5);     
+01BA:  MOVLW  05
+01BB:  MOVWF  24
+01BC:  CALL   14B
+....................                        delay_ms(50); 
+01BD:  MOVLW  32
+01BE:  MOVWF  28
+01BF:  CALL   004
+01C0:  INCF   23,F
+01C1:  GOTO   1AE
+....................                 } 
+01C2:  RETURN
+.................... }                 
+....................  
+.................... //---------------MAIN-------------- 
+.................... void main() 
+*
+0281:  MOVF   03,W
+0282:  ANDLW  1F
+0283:  MOVWF  03
+0284:  MOVLW  07
+0285:  BSF    03.5
+0286:  MOVWF  1C
+0287:  BCF    03.7
+.................... { 
+....................  
+....................    delay_ms(1000); 
+*
+028C:  MOVLW  04
+028D:  MOVWF  23
+028E:  MOVLW  FA
+028F:  MOVWF  28
+0290:  CALL   004
+0291:  DECFSZ 23,F
+0292:  GOTO   28E
+....................  
+....................    init_DS1307(); 
+0293:  GOTO   019
+....................    write_ds1307(0,read_ds1307(0) & 0x7F); // enable oscillator(bit 7 =0) 
+0294:  CLRF   23
+0295:  CALL   053
+0296:  MOVF   78,W
+0297:  ANDLW  7F
+0298:  MOVWF  23
+0299:  CLRF   24
+029A:  MOVF   23,W
+029B:  MOVWF  25
+029C:  CALL   0C4
+....................     
+....................    delay_ms(500); 
+029D:  MOVLW  02
+029E:  MOVWF  23
+029F:  MOVLW  FA
+02A0:  MOVWF  28
+02A1:  CALL   004
+02A2:  DECFSZ 23,F
+02A3:  GOTO   29F
+....................    //reset_time(); 
+....................  
+....................    delay_ms(500); 
+02A4:  MOVLW  02
+02A5:  MOVWF  23
+02A6:  MOVLW  FA
+02A7:  MOVWF  28
+02A8:  CALL   004
+02A9:  DECFSZ 23,F
+02AA:  GOTO   2A6
+....................    //petla glowna 
+....................    while(1==1){ 
+....................     
+....................         
+....................        if (input(button_set) == true) { 
+02AB:  BSF    03.5
+02AC:  BSF    06.2
+02AD:  BCF    03.5
+02AE:  BTFSS  06.2
+02AF:  GOTO   313
+....................                blink(); 
+02B0:  CALL   1AD
+....................                delay_ms(500); 
+02B1:  MOVLW  02
+02B2:  MOVWF  23
+02B3:  MOVLW  FA
+02B4:  MOVWF  28
+02B5:  CALL   004
+02B6:  DECFSZ 23,F
+02B7:  GOTO   2B3
+....................                 
+....................                //informacja ze minuty 
+....................                clear(); 
+02B8:  CALL   124
+....................                Output_high(on_mode); 
+02B9:  BSF    03.5
+02BA:  BCF    05.4
+02BB:  BCF    03.5
+02BC:  BSF    05.4
+....................                show(1); 
+02BD:  MOVLW  01
+02BE:  MOVWF  24
+02BF:  CALL   14B
+....................                 
+....................                delay_ms(1000); 
+02C0:  MOVLW  04
+02C1:  MOVWF  23
+02C2:  MOVLW  FA
+02C3:  MOVWF  28
+02C4:  CALL   004
+02C5:  DECFSZ 23,F
+02C6:  GOTO   2C2
+....................                //ustawienie minut 
+....................                while (input(button_set) == false){ 
+02C7:  BSF    03.5
+02C8:  BSF    06.2
+02C9:  BCF    03.5
+02CA:  BTFSC  06.2
+02CB:  GOTO   2E4
+....................                        show_time(t_real[1]); 
+02CC:  MOVF   21,W
+02CD:  MOVWF  23
+02CE:  CALL   1C3
+....................                        if (input(button_plus) == true){ 
+02CF:  BSF    03.5
+02D0:  BSF    06.3
+02D1:  BCF    03.5
+02D2:  BTFSS  06.3
+02D3:  GOTO   2DC
+....................                                 if (t_real[1]<60){ 
+02D4:  MOVF   21,W
+02D5:  SUBLW  3B
+02D6:  BTFSS  03.0
+02D7:  GOTO   2DB
+....................                                         t_real[1] = t_real[1] + 1; 
+02D8:  MOVLW  01
+02D9:  ADDWF  21,F
+....................                                 } 
+02DA:  GOTO   2DC
+....................                                 else { 
+....................                                         t_real[1] = 0; 
+02DB:  CLRF   21
+....................                                 } 
+....................                        } 
+....................                        delay_ms(300); 
+02DC:  MOVLW  02
+02DD:  MOVWF  23
+02DE:  MOVLW  96
+02DF:  MOVWF  28
+02E0:  CALL   004
+02E1:  DECFSZ 23,F
+02E2:  GOTO   2DE
+02E3:  GOTO   2C7
+....................                } 
+....................                 
+....................                blink(); 
+02E4:  CALL   1AD
+....................  
+....................                //informacja ze godziny 
+....................                clear(); 
+02E5:  CALL   124
+....................                Output_high(on_mode); 
+02E6:  BSF    03.5
+02E7:  BCF    05.4
+02E8:  BCF    03.5
+02E9:  BSF    05.4
+....................                show(4); 
+02EA:  MOVLW  04
+02EB:  MOVWF  24
+02EC:  CALL   14B
+....................                 
+....................                delay_ms(1000); 
+02ED:  MOVLW  04
+02EE:  MOVWF  23
+02EF:  MOVLW  FA
+02F0:  MOVWF  28
+02F1:  CALL   004
+02F2:  DECFSZ 23,F
+02F3:  GOTO   2EF
+....................                //ustawienie godzin 
+....................                while (input(button_set) == false){ 
+02F4:  BSF    03.5
+02F5:  BSF    06.2
+02F6:  BCF    03.5
+02F7:  BTFSC  06.2
+02F8:  GOTO   311
+....................                        show_time(t_real[0]); 
+02F9:  MOVF   20,W
+02FA:  MOVWF  23
+02FB:  CALL   1C3
+....................                        if (input(button_plus) == true){ 
+02FC:  BSF    03.5
+02FD:  BSF    06.3
+02FE:  BCF    03.5
+02FF:  BTFSS  06.3
+0300:  GOTO   309
+....................                                 if (t_real[0]<24){ 
+0301:  MOVF   20,W
+0302:  SUBLW  17
+0303:  BTFSS  03.0
+0304:  GOTO   308
+....................                                         t_real[0] = t_real[0] + 1; 
+0305:  MOVLW  01
+0306:  ADDWF  20,F
+....................                                 } 
+0307:  GOTO   309
+....................                                 else { 
+....................                                         t_real[0] = 0; 
+0308:  CLRF   20
+....................                                 } 
+....................                        } 
+....................                        delay_ms(300); 
+0309:  MOVLW  02
+030A:  MOVWF  23
+030B:  MOVLW  96
+030C:  MOVWF  28
+030D:  CALL   004
+030E:  DECFSZ 23,F
+030F:  GOTO   30B
+0310:  GOTO   2F4
+....................                } 
+....................                 
+....................                //zapisanie ustawionego czasu 
+....................  
+....................                set_time(); 
+0311:  GOTO   1F3
+....................                blink(); 
+0312:  CALL   1AD
+....................        } 
+....................         
+....................  
+....................        //odczyt czasu z rtc             
+....................        t_real[0] = 0; //h 
+0313:  CLRF   20
+....................        t_real[1] = 0; //m 
+0314:  CLRF   21
+....................        t_real[2] = 0; //s 
+0315:  CLRF   22
+....................         
+....................        read_time(); 
+0316:  GOTO   265
+....................  
+.................... /* 
+....................        int8 z = t_real[1]; 
+....................         
+....................         for(int8 x=0;x<z; x++){ 
+....................           Output_high(PIN_B3); 
+....................           delay_ms(200);        
+....................           Output_low(PIN_B3); 
+....................           delay_ms(200);    
+....................         } 
+....................        delay_ms(3000); 
+.................... */      
+....................  
+....................       //swiecimy tylko miedzy 7 i 17:59 
+....................       if (t_real[0]>6 && t_real[0]<18){ 
+0317:  MOVF   20,W
+0318:  SUBLW  06
+0319:  BTFSC  03.0
+031A:  GOTO   37B
+031B:  MOVF   20,W
+031C:  SUBLW  11
+031D:  BTFSS  03.0
+031E:  GOTO   37B
+....................        //impuls wlaczajacy zewnetrzne urzadzenia 
+....................        Output_high(PIN_B0); 
+031F:  BSF    03.5
+0320:  BCF    06.0
+0321:  BCF    03.5
+0322:  BSF    06.0
+....................        
+....................        //informacja ze sekundy 
+....................        clear(); 
+0323:  CALL   124
+....................        Output_high(on_mode); 
+0324:  BSF    03.5
+0325:  BCF    05.4
+0326:  BCF    03.5
+0327:  BSF    05.4
+....................        show(5); 
+0328:  MOVLW  05
+0329:  MOVWF  24
+032A:  CALL   14B
+....................        delay_ms(1000);  
+032B:  MOVLW  04
+032C:  MOVWF  23
+032D:  MOVLW  FA
+032E:  MOVWF  28
+032F:  CALL   004
+0330:  DECFSZ 23,F
+0331:  GOTO   32D
+....................        //pokazanie sekund 
+....................        show_time(t_real[2]); 
+0332:  MOVF   22,W
+0333:  MOVWF  23
+0334:  CALL   1C3
+....................        Output_high(on_time); 
+0335:  BSF    03.5
+0336:  BCF    05.3
+0337:  BCF    03.5
+0338:  BSF    05.3
+....................        delay_ms(2000);                       
+0339:  MOVLW  08
+033A:  MOVWF  23
+033B:  MOVLW  FA
+033C:  MOVWF  28
+033D:  CALL   004
+033E:  DECFSZ 23,F
+033F:  GOTO   33B
+....................        
+....................        //informacja ze minuty 
+....................        clear(); 
+0340:  CALL   124
+....................        Output_high(on_mode); 
+0341:  BSF    03.5
+0342:  BCF    05.4
+0343:  BCF    03.5
+0344:  BSF    05.4
+....................        show(1); 
+0345:  MOVLW  01
+0346:  MOVWF  24
+0347:  CALL   14B
+....................        delay_ms(1000);      
+0348:  MOVLW  04
+0349:  MOVWF  23
+034A:  MOVLW  FA
+034B:  MOVWF  28
+034C:  CALL   004
+034D:  DECFSZ 23,F
+034E:  GOTO   34A
+....................        //pokazanie minut 
+....................        show_time(t_real[1]); 
+034F:  MOVF   21,W
+0350:  MOVWF  23
+0351:  CALL   1C3
+....................        Output_high(on_time); 
+0352:  BSF    03.5
+0353:  BCF    05.3
+0354:  BCF    03.5
+0355:  BSF    05.3
+....................        delay_ms(2000);  
+0356:  MOVLW  08
+0357:  MOVWF  23
+0358:  MOVLW  FA
+0359:  MOVWF  28
+035A:  CALL   004
+035B:  DECFSZ 23,F
+035C:  GOTO   358
+....................  
+....................        //informacja ze godziny 
+....................        clear(); 
+035D:  CALL   124
+....................        Output_high(on_mode); 
+035E:  BSF    03.5
+035F:  BCF    05.4
+0360:  BCF    03.5
+0361:  BSF    05.4
+....................        show(4); 
+0362:  MOVLW  04
+0363:  MOVWF  24
+0364:  CALL   14B
+....................        delay_ms(1000);  
+0365:  MOVLW  04
+0366:  MOVWF  23
+0367:  MOVLW  FA
+0368:  MOVWF  28
+0369:  CALL   004
+036A:  DECFSZ 23,F
+036B:  GOTO   367
+....................        //pokazanie godzin 
+....................        show_time(t_real[0]); 
+036C:  MOVF   20,W
+036D:  MOVWF  23
+036E:  CALL   1C3
+....................        Output_high(on_time); 
+036F:  BSF    03.5
+0370:  BCF    05.3
+0371:  BCF    03.5
+0372:  BSF    05.3
+....................        delay_ms(2000); 
+0373:  MOVLW  08
+0374:  MOVWF  23
+0375:  MOVLW  FA
+0376:  MOVWF  28
+0377:  CALL   004
+0378:  DECFSZ 23,F
+0379:  GOTO   375
+....................       } 
+037A:  GOTO   37F
+....................       else{ 
+....................       //impuls wylaczajacy zewnetrzne urzadzenia 
+....................        Output_low(PIN_B0); 
+037B:  BSF    03.5
+037C:  BCF    06.0
+037D:  BCF    03.5
+037E:  BCF    06.0
+....................       } 
+037F:  GOTO   2AB
+....................        
+....................        
+....................    } 
+.................... } 
+0380:  SLEEP
+
+Configuration Fuses:
+   Word  1: 3F21   NOWDT PUT XT MCLR NOBROWNOUT NOLVP NOCPD NOWRT NODEBUG CCPB0 NOPROTECT
+   Word  2: 3FFF   FCMEN IESO

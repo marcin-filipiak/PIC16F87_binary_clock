@@ -1,0 +1,312 @@
+CCS PCM C Compiler, Version 5.025, 5967               09-paü-14 19:18
+
+               Filename:   Z:\home\kolgreen\Dropbox\Projekty\Elektronika\zegar_binarny\uC\Nowy Folder\main.lst
+
+               ROM used:   115 words (3%)
+                           Largest free fragment is 2048
+               RAM used:   8 (2%) at main() level
+                           10 (3%) worst case
+               Stack used: 2 locations
+               Stack size: 8
+
+*
+0000:  MOVLW  00
+0001:  MOVWF  0A
+0002:  GOTO   03C
+0003:  NOP
+.................... #include <main.h> 
+.................... #include <16F87.h> 
+.................... //////// Standard Header file for the PIC16F87 device //////////////// 
+.................... #device PIC16F87 
+....................  
+.................... #list 
+....................  
+....................  
+.................... #use delay(clock=4000000) 
+0004:  MOVLW  24
+0005:  MOVWF  04
+0006:  BCF    03.7
+0007:  MOVF   00,W
+0008:  BTFSC  03.2
+0009:  GOTO   018
+000A:  MOVLW  01
+000B:  MOVWF  78
+000C:  CLRF   77
+000D:  DECFSZ 77,F
+000E:  GOTO   00D
+000F:  DECFSZ 78,F
+0010:  GOTO   00C
+0011:  MOVLW  4A
+0012:  MOVWF  77
+0013:  DECFSZ 77,F
+0014:  GOTO   013
+0015:  GOTO   016
+0016:  DECFSZ 00,F
+0017:  GOTO   00A
+0018:  RETURN
+.................... #fuses NOWDT,XT, NOPUT, NOPROTECT 
+....................  
+.................... #use STANDARD_IO(A,B) 
+.................... #use FIXED_IO( A_outputs=PIN_A0,PIN_A1,PIN_A2,PIN_A3,PIN_A4 ) 
+.................... #use FIXED_IO( B_outputs=PIN_B5,PIN_B6,PIN_B7 ) 
+.................... #define bit3   PIN_A0 
+.................... #define bit2   PIN_A1 
+.................... #define bit1   PIN_A2 
+.................... #define on_time   PIN_A3 
+.................... #define on_set   PIN_A4 
+.................... #define button1   PIN_B2 
+.................... #define button2   PIN_B3 
+.................... #define bit5      PIN_B6 
+.................... #define bit4      PIN_B7 
+.................... #define bit6      PIN_B5 
+....................  
+....................  
+.................... //#use i2c(Master,Slow,sda=PIN_B1,scl=PIN_B4) 
+....................  
+....................  
+....................  
+.................... #include <conversion.c> 
+.................... // Convert normal decimal numbers to binary coded decimal 
+.................... byte decToBcd(byte val) 
+.................... { 
+....................   return ( (val/10*16) + (val%10) ); 
+.................... } 
+....................  
+.................... // Convert binary coded decimal to normal decimal numbers 
+.................... byte bcdToDec(byte val) 
+.................... { 
+....................   return ( (val/16*10) + (val%16) ); 
+.................... } 
+....................  
+.................... #include <ds1307.c> 
+....................  
+.................... #define DS1307_SDA  PIN_B1 
+.................... #define DS1307_SCL  PIN_B4 
+.................... #use i2c(Master,sda=PIN_B1,scl=PIN_B4) 
+....................  
+....................  
+.................... //========================== 
+.................... // initial DS1307 
+.................... //========================== 
+.................... void init_DS1307() 
+.................... { 
+....................    output_float(DS1307_SCL); 
+....................    output_float(DS1307_SDA); 
+.................... } 
+.................... //========================== 
+.................... // write data one byte to 
+.................... // DS1307 
+.................... //========================== 
+.................... void write_DS1307(byte address, BYTE data) 
+.................... { 
+....................    short int status; 
+....................    i2c_start(); 
+....................    i2c_write(0xd0); 
+....................    i2c_write(address); 
+....................    i2c_write(data); 
+....................    i2c_stop(); 
+....................    i2c_start(); 
+....................    status=i2c_write(0xd0); 
+....................    while(status==1) 
+....................    { 
+....................       i2c_start(); 
+....................       status=i2c_write(0xd0); 
+....................    } 
+.................... } 
+.................... //========================== 
+.................... // read data one byte from DS1307 
+.................... //========================== 
+.................... BYTE read_DS1307(byte address) 
+.................... { 
+....................    BYTE data; 
+....................    i2c_start(); 
+....................    i2c_write(0xd0); 
+....................    i2c_write(address); 
+....................    i2c_start(); 
+....................    i2c_write(0xd1); 
+....................    data=i2c_read(0); 
+....................    i2c_stop(); 
+....................    return(data); 
+.................... } 
+....................  
+....................  
+.................... ////////////////////////// 
+....................  
+.................... void ds1307_set_date_time(BYTE day, BYTE mth, BYTE year, BYTE hr, BYTE min, BYTE sec) 
+.................... { 
+....................   sec &= 0x7F; 
+....................   hr &= 0x3F; 
+....................  
+....................   i2c_start(); 
+....................   i2c_write(0xD0);            // I2C write address 
+....................   i2c_write(0x00);            // Start at REG 0 - Seconds 
+....................   i2c_write(decToBcd(sec));      // REG 0 
+....................   i2c_write(decToBcd(min));      // REG 1 
+....................   i2c_write(decToBcd(hr));      // REG 2 
+....................   i2c_write(decToBcd(1));      // REG 3 
+....................   i2c_write(decToBcd(day));      // REG 4 
+....................   i2c_write(decToBcd(mth));      // REG 5 
+....................   i2c_write(decToBcd(year));      // REG 6 
+....................   i2c_write(0x80);            // REG 7 - Disable squarewave output pin 
+....................   i2c_stop(); 
+.................... }  
+....................  
+....................  
+....................  
+....................  
+.................... int min; 
+.................... int hour; 
+....................  
+.................... void beep(){ 
+....................       output_high(PIN_B6); 
+0019:  MOVLW  1F
+001A:  BSF    03.5
+001B:  MOVWF  06
+001C:  BCF    03.5
+001D:  BSF    06.6
+....................       output_high(PIN_A3); 
+001E:  MOVLW  E0
+001F:  BSF    03.5
+0020:  MOVWF  05
+0021:  BCF    03.5
+0022:  BSF    05.3
+....................       delay_ms(1000); 
+0023:  MOVLW  04
+0024:  MOVWF  23
+0025:  MOVLW  FA
+0026:  MOVWF  24
+0027:  CALL   004
+0028:  DECFSZ 23,F
+0029:  GOTO   025
+....................       output_low(PIN_B6); //B3 
+002A:  MOVLW  1F
+002B:  BSF    03.5
+002C:  MOVWF  06
+002D:  BCF    03.5
+002E:  BCF    06.6
+....................       output_low(PIN_A3); 
+002F:  MOVLW  E0
+0030:  BSF    03.5
+0031:  MOVWF  05
+0032:  BCF    03.5
+0033:  BCF    05.3
+....................       delay_ms(1000); 
+0034:  MOVLW  04
+0035:  MOVWF  23
+0036:  MOVLW  FA
+0037:  MOVWF  24
+0038:  CALL   004
+0039:  DECFSZ 23,F
+003A:  GOTO   036
+003B:  RETURN
+.................... } 
+....................  
+.................... //odczytanie czasu z zegara 
+.................... void read_time(){ 
+....................      min=bcdToDec(read_ds1307(1));   // read minute 
+....................      hour=bcdToDec(read_ds1307(2));  // read hour 
+.................... } 
+....................  
+.................... //resetowanie zegara 
+.................... void reset_clock(){ 
+....................      write_ds1307(2,0); //hour 
+....................      write_ds1307(1,0); //minute 
+....................      write_ds1307(0,0); //second 
+....................      write_ds1307(4,1); //date 
+....................      write_ds1307(5,1); //month 
+....................      write_ds1307(6,1); //year 
+....................  
+....................      write_ds1307(8,0); 
+....................      write_ds1307(9,0); 
+....................      write_ds1307(10,0); 
+....................      write_ds1307(11,0); 
+....................      write_ds1307(12,0); 
+....................      write_ds1307(13,0); 
+.................... } 
+....................  
+.................... void main() 
+003C:  MOVF   03,W
+003D:  ANDLW  1F
+003E:  MOVWF  03
+003F:  MOVLW  07
+0040:  BSF    03.5
+0041:  MOVWF  1C
+0042:  BCF    03.7
+.................... { 
+....................  
+....................   delay_ms(1000); 
+0043:  MOVLW  04
+0044:  BCF    03.5
+0045:  MOVWF  23
+0046:  MOVLW  FA
+0047:  MOVWF  24
+0048:  CALL   004
+0049:  DECFSZ 23,F
+004A:  GOTO   046
+....................   beep(); 
+004B:  CALL   019
+....................  
+....................    //wykasowac po testach 
+....................    //reset_clock(); 
+....................  
+....................    //init_ds1307();          // initial DS1307 
+....................  
+....................    //write_ds1307(0,read_ds1307(0) & 0x7F); // enable oscillator(bit 7 =0) 
+....................    delay_ms(1000); 
+004C:  MOVLW  04
+004D:  MOVWF  23
+004E:  MOVLW  FA
+004F:  MOVWF  24
+0050:  CALL   004
+0051:  DECFSZ 23,F
+0052:  GOTO   04E
+....................    beep(); 
+0053:  CALL   019
+....................    delay_ms(1000); 
+0054:  MOVLW  04
+0055:  MOVWF  23
+0056:  MOVLW  FA
+0057:  MOVWF  24
+0058:  CALL   004
+0059:  DECFSZ 23,F
+005A:  GOTO   056
+....................  
+....................    while(true) 
+....................    { 
+....................         for (int x=0;x<min;x++){ 
+005B:  CLRF   22
+005C:  MOVF   20,W
+005D:  SUBWF  22,W
+005E:  BTFSC  03.0
+005F:  GOTO   06A
+....................                 beep(); 
+0060:  CALL   019
+....................                 delay_ms(500); 
+0061:  MOVLW  02
+0062:  MOVWF  23
+0063:  MOVLW  FA
+0064:  MOVWF  24
+0065:  CALL   004
+0066:  DECFSZ 23,F
+0067:  GOTO   063
+0068:  INCF   22,F
+0069:  GOTO   05C
+....................         } 
+....................          
+....................         delay_ms(2000); 
+006A:  MOVLW  08
+006B:  MOVWF  23
+006C:  MOVLW  FA
+006D:  MOVWF  24
+006E:  CALL   004
+006F:  DECFSZ 23,F
+0070:  GOTO   06C
+0071:  GOTO   05B
+....................    } 
+....................  
+.................... } 
+0072:  SLEEP
+
+Configuration Fuses:
+   Word  1: 3F69   NOWDT NOPUT XT MCLR BROWNOUT NOLVP NOCPD NOWRT NODEBUG CCPB0 NOPROTECT
+   Word  2: 3FFF   FCMEN IESO

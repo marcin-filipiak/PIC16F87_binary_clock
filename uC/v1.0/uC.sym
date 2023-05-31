@@ -1,0 +1,98 @@
+004-005 @READ_PROGRAM_MEMORY8.P1
+004-005 @WRITE_PROGRAM_MEMORY8.P2
+015     CCP_1_LOW
+015     CCP_1
+016     CCP_1_HIGH
+020-022 t_real
+023     show_time.n
+023     read_DS1307.address
+023     blink.x
+023     decToBcd.val
+023     read_time.@SCRATCH1
+023     set_time.@SCRATCH1
+023     MAIN.@SCRATCH1
+024     show.n
+024     read_DS1307.data
+024     write_DS1307.address
+024     bcdToDec.val
+024     decToBcd.@SCRATCH1
+025     @DIV88.P1
+025     @I2C_READ_1.P2
+025     write_DS1307.data
+025     bcdToDec.@SCRATCH1
+026     @DIV88.P1
+026.0   write_DS1307.status
+026     bcdToDec.@SCRATCH2
+026     @I2C_READ_1.@SCRATCH1
+027     @MUL88.P1
+027     write_DS1307.x
+027     @DIV88.@SCRATCH1
+027     @I2C_READ_1.@SCRATCH2
+028     @I2C_WRITE_1.P1
+028     @delay_ms1.P2
+028     @MUL88.P3
+028     write_DS1307.@SCRATCH1
+077     @SCRATCH
+078     @SCRATCH
+078     _RETURN_
+079     @SCRATCH
+07A     @SCRATCH
+09C.6   C1OUT
+09C.7   C2OUT
+10D-10E @WRITE_PROGRAM_MEMORY8.P1
+10D-10E @READ_PROGRAM_MEMORY8.P2
+
+ROM Allocation:
+000004  @delay_ms1
+000019  init_DS1307
+00001F  @I2C_WRITE_1
+000053  read_DS1307
+00007F  @I2C_READ_1
+0000C4  write_DS1307
+000124  clear
+00014B  show
+0001AD  blink
+0001C3  show_time
+0001CC  @DIV88
+0001E1  decToBcd
+0001F3  set_time
+000230  bcdToDec
+00023A  @MUL88
+000265  read_time
+000281  MAIN
+000281  @cinit1
+000287  @cinit2
+
+Project Directory:
+    Z:\home\kolgreen\Dropbox\Projekty\Elektronika\zegar_binarny\uC\old\
+
+Project Files:
+    uC.c                                                    [13-lis-14 18:48  CRC=BB02E90C]
+    C:\Program Files\PICC\Devices\16F87.h                   [12-lut-14 15:09  CRC=1907BD4D]
+    conversion.c                                            [14-lis-11 10:51  CRC=EF240690]
+    ds1307.c                                                [09-paü-14 12:23  CRC=A74B66D5]
+
+Source signature=11C57A93
+
+Units:
+    uC (main)
+
+Compiler Settings:
+    Processor:      PIC16F87
+    Pointer Size:   16
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+    Compile Mode:       CCS5
+
+Output Files:
+    XREF file:   uC.xsym
+    Errors:      uC.err
+    Ext Symbols: uC.esym
+    INHX8:       uC.hex
+    Symbols:     uC.sym
+    List:        uC.lst
+    Debug/COFF:  uC.cof
+    Project:     uC.ccspjt
+    Call Tree:   uC.tre
+    Statistics:  uC.STA

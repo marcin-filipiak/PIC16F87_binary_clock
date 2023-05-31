@@ -1,0 +1,62 @@
+004-005 @READ_PROGRAM_MEMORY8.P1
+004-005 @WRITE_PROGRAM_MEMORY8.P2
+015     CCP_1_LOW
+015     CCP_1
+016     CCP_1_HIGH
+020     min
+021     hour
+022     MAIN.x
+023     beep.@SCRATCH1
+023     MAIN.@SCRATCH1
+024     @delay_ms1.P1
+077     @SCRATCH
+078     @SCRATCH
+078     _RETURN_
+079     @SCRATCH
+07A     @SCRATCH
+09C.6   C1OUT
+09C.7   C2OUT
+10D-10E @WRITE_PROGRAM_MEMORY8.P1
+10D-10E @READ_PROGRAM_MEMORY8.P2
+
+ROM Allocation:
+000004  @delay_ms1
+000019  beep
+00003C  MAIN
+00003C  @cinit1
+000042  @cinit2
+
+Project Directory:
+    Z:\home\kolgreen\Dropbox\Projekty\Elektronika\zegar_binarny\uC\Nowy Folder\
+
+Project Files:
+    main.c                                                  [09-paü-14 19:17  CRC=460B950C]
+    C:\Program Files\PICC\Devices\main.h                    [02-paü-14 18:57  CRC=4CD49C91]
+    C:\Program Files\PICC\Devices\16F87.h                   [03-lip-13 14:28  CRC=3BF08D60]
+    conversion.c                                            [14-lis-11 11:51  CRC=EF240690]
+    ds1307.c                                                [09-paü-14 18:44  CRC=3C02D30A]
+
+Source signature=35FA6BA1
+
+Units:
+    main (main)
+
+Compiler Settings:
+    Processor:      PIC16F87
+    Pointer Size:   16
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+    Compile Mode:       CCS5
+
+Output Files:
+    XREF file:   main.xsym
+    Errors:      main.err
+    Ext Symbols: main.esym
+    INHX8:       main.hex
+    Symbols:     main.sym
+    List:        main.lst
+    Debug/COFF:  main.cof
+    Project:     main.ccspjt
+    Call Tree:   main.tre
+    Statistics:  main.STA

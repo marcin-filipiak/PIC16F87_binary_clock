@@ -1,0 +1,55 @@
+004-005 @READ_PROGRAM_MEMORY8.P1
+00C     @SCRATCH
+00D     @SCRATCH
+00D     _RETURN_
+00E     @SCRATCH
+00F     @SCRATCH
+010     @SCRATCH
+011-013 t_real
+014     c
+015     show_time.n
+015     MAIN.@SCRATCH1
+016     show.n
+017     @delay_ms1.P1
+10D-10E @READ_PROGRAM_MEMORY8.P1
+
+ROM Allocation:
+0004  @delay_ms1
+0044  show
+0018  clear
+0018  show_time
+00A6  MAIN
+00A6  @cinit
+
+
+User Memory space: 
+
+Project Directory:
+    Z:\home\mfilipiak\Dropbox\Projekty\elektronika\zegar_binarny\uC\demo\
+
+Project Files:
+    uC.c
+    C:\Program Files\PICC\devices\16F84A.h
+    conversion.c
+    ds1307.c
+
+Units:
+    Z:\home\mfilipiak\Dropbox\Projekty\elektronika\zegar_binarny\uC\demo\uC.c (main)
+
+Compiler Settings:
+    Processor:      PIC16F84A
+    Pointer Size:   8
+    Opt Level:      9
+    Short,Int,Long: UNSIGNED: 1,8,16
+    Float,Double:   32,32
+
+Output Files:
+    Errors:      uC.err
+    Ext Symbols: uC.esym
+    INHX8:       uC.hex
+    Symbols:     uC.sym
+    List:        uC.lst
+    Debug/COFF:  uC.cof
+    Project:     uC.PJT
+    Call Tree:   uC.tre
+    Statistics:  uC.sta
