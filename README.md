@@ -1,11 +1,12 @@
 # PIC16F87_binary_clock
 Binary clock based on PIC16F87
 
+```
 3d - visualisation
 doc - documentation
 pcb - printed circuit board project
 uC - program for microcontroller
-
+```
 
 
 ## PCB
